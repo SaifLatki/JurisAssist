@@ -200,7 +200,7 @@ export default function Home() {
                       <Check className="w-5 h-5 text-[#00FF88] flex-shrink-0 mt-0.5" />
                       <span className="text-sm">{feature}</span>
                     </li>
-                  ))}
+                  ))} 
                 </ul>
                 <button
                   className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 ${
