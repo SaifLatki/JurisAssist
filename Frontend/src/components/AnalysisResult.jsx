@@ -7,27 +7,19 @@ import {
   FileCode,
   RotateCcw,
 } from "lucide-react";
-import { AnalysisResult } from "../types";
-
-interface AnalysisResultsProps {
-  result: AnalysisResult;
-  onNewAnalysis: () => void;
-}
-
-type TabType = "summary" | "legal_points" | "risks" | "advice" | "template";
 
 export default function AnalysisResults({
   result,
   onNewAnalysis,
-}: AnalysisResultsProps) {
-  const [activeTab, setActiveTab] = useState<TabType>("summary");
+}) {
+  const [activeTab, setActiveTab] = useState("summary");
 
   const tabs = [
-    { id: "summary" as TabType, label: "Summary", icon: FileText },
-    { id: "legal_points" as TabType, label: "Legal Points", icon: ClipboardCheck },
-    { id: "risks" as TabType, label: "Risks", icon: AlertTriangle },
-    { id: "advice" as TabType, label: "Advice", icon: Lightbulb },
-    { id: "template" as TabType, label: "Template", icon: FileCode },
+    { id: "summary", label: "Summary", icon: FileText },
+    { id: "legal_points", label: "Legal Points", icon: ClipboardCheck },
+    { id: "risks", label: "Risks", icon: AlertTriangle },
+    { id: "advice", label: "Advice", icon: Lightbulb },
+    { id: "template", label: "Template", icon: FileCode },
   ];
 
   return (

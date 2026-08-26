@@ -1,21 +1,15 @@
 import { useState } from "react";
 import { X, Send } from "lucide-react";
 import { supabase } from "../lib/supabase";
-import { Lawyer } from "../types";
 
-interface ContactLawyerModalProps {
-  lawyer: Lawyer;
-  onClose: () => void;
-}
-
-export default function ContactLawyerModal({ lawyer, onClose }: ContactLawyerModalProps) {
+export default function ContactLawyerModal({ lawyer, onClose }) {
   const [senderName, setSenderName] = useState("");
   const [senderEmail, setSenderEmail] = useState("");
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!senderName || !senderEmail || !message) {
@@ -52,7 +46,9 @@ export default function ContactLawyerModal({ lawyer, onClose }: ContactLawyerMod
       <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl max-w-md w-full shadow-xl shadow-[#00C2FF]/20 overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-white/10">
-          <h2 className="text-2xl font-bold text-white">Contact {lawyer.name}</h2>
+          <h2 className="text-2xl font-bold text-white">
+            Contact {lawyer.name}
+          </h2>
           <button
             onClick={onClose}
             className="text-gray-300 hover:text-white transition-colors"
@@ -67,7 +63,9 @@ export default function ContactLawyerModal({ lawyer, onClose }: ContactLawyerMod
             <div className="w-16 h-16 bg-green-600/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <Send className="h-8 w-8 text-green-400" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-2">Message Sent!</h3>
+            <h3 className="text-xl font-semibold text-white mb-2">
+              Message Sent!
+            </h3>
             <p className="text-gray-300">
               {lawyer.name} will receive your message and contact you soon.
             </p>

@@ -3,26 +3,8 @@ import { ArrowUp, User, Scale, Sparkles } from "lucide-react";
 import LoadingSpinner from "../components/LoadingSpinner";
 import axios from "axios";
 
-interface UserMessage {
-  role: "user";
-  text: string;
-  time: string;
-}
-
-interface BotMessage {
-  role: "assistant";
-  text: string;
-  time: string;
-}
-
-type Message = UserMessage | BotMessage;
-
-function getTime() {
-  return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-}
-
 // Renders line breaks and bold (**text**) in bot messages
-function FormattedText({ text }: { text: string }) {
+function FormattedText({ text }) {
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
   return (
     <>
@@ -47,21 +29,31 @@ function FormattedText({ text }: { text: string }) {
 }
 
 export default function LegalChat() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState([]);
   const [textInput, setTextInput] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  const getTime = () => {
+    return new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
   const sendMessage = async () => {
     const trimmed = textInput.trim();
     if (!trimmed || isAnalyzing) return;
 
-    setMessages((prev) => [...prev, { role: "user", text: trimmed, time: getTime() }]);
+    setMessages((prev) => [
+      ...prev,
+      { role: "user", text: trimmed, time: getTime() },
+    ]);
     setIsAnalyzing(true);
     setTextInput("");
 
@@ -70,6 +62,7 @@ export default function LegalChat() {
         message: trimmed,
       });
       const data = response.data;
+
       setMessages((prev) => [
         ...prev,
         {
@@ -94,7 +87,7 @@ export default function LegalChat() {
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
@@ -492,13 +485,19 @@ export default function LegalChat() {
                   <Scale size={22} />
                 </div>
                 <h3>Start a conversation</h3>
-                <p>Ask about contracts, rights, procedures, or any legal question.</p>
+                <p>
+                  Ask about contracts, rights, procedures, or any legal question.
+                </p>
               </div>
             ) : (
               messages.map((msg, i) => (
                 <div key={i} className={`msg-row ${msg.role}`}>
                   <div className={`msg-avatar ${msg.role}`}>
-                    {msg.role === "user" ? <User size={15} /> : <Scale size={15} />}
+                    {msg.role === "user" ? (
+                      <User size={15} />
+                    ) : (
+                      <Scale size={15} />
+                    )}
                   </div>
                   <div className="msg-body">
                     <div className="msg-bubble">
@@ -553,7 +552,9 @@ export default function LegalChat() {
           </div>
         </div>
 
-        <p className="chat-hint">Press Enter to send · Shift+Enter for new line</p>
+        <p className="chat-hint">
+          Press Enter to send · Shift+Enter for new line
+        </p>
       </div>
     </>
   );

@@ -96,21 +96,27 @@ export default function Disclaimer() {
               <li>• You are unsure about your legal rights or obligations</li>
             </ul>
 
-            <h2 className="text-2xl font-bold text-white mb-4 mt-6">Limitation of Liability</h2>
+            <h2 className="text-2xl font-bold text-white mb-4 mt-6">
+              Limitation of Liability
+            </h2>
             <p className="text-gray-300 leading-relaxed">
               JurisAssist, its operators, and affiliates shall not be liable for any damages,
               losses, or legal consequences resulting from the use or reliance on information
               provided through this service. You use JurisAssist at your own risk.
             </p>
 
-            <h2 className="text-2xl font-bold text-white mb-4 mt-6">Privacy and Security</h2>
+            <h2 className="text-2xl font-bold text-white mb-4 mt-6">
+              Privacy and Security
+            </h2>
             <p className="text-gray-300 leading-relaxed">
               While we take reasonable measures to protect your information, any data you upload
               or submit is processed by our AI system. Do not submit highly sensitive or
               confidential information without understanding the privacy implications.
             </p>
 
-            <h2 className="text-2xl font-bold text-white mb-4 mt-6">Jurisdiction-Specific Laws</h2>
+            <h2 className="text-2xl font-bold text-white mb-4 mt-6">
+              Jurisdiction-Specific Laws
+            </h2>
             <p className="text-gray-300 leading-relaxed">
               Laws vary significantly by country, state, and locality. Our AI provides general
               information and may not account for the specific laws in your jurisdiction. Always
@@ -119,7 +125,9 @@ export default function Disclaimer() {
 
             {/* Acknowledgment Box */}
             <div className="bg-gradient-to-r from-[#00C2FF]/30 to-[#00FF88]/30 rounded-2xl p-6 mt-8">
-              <h3 className="text-xl font-bold text-white mb-2">By Using JurisAssist, You Acknowledge:</h3>
+              <h3 className="text-xl font-bold text-white mb-2">
+                By Using JurisAssist, You Acknowledge:
+              </h3>
               <ul className="space-y-2 text-white">
                 <li>• You understand this is not legal advice</li>
                 <li>• You will not rely solely on AI-generated information for legal decisions</li>

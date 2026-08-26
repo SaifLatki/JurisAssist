@@ -15,9 +15,10 @@ function App() {
     <Router>
       <div className="min-h-screen bg-[#0D1117] text-white flex flex-col">
         <Navbar />
+
         <main className="flex-1">
           <Routes>
-            <Route path="/" element={<Home />}end />
+            <Route path="/" element={<Home />} />
             <Route path="/demo" element={<Demo />} />
             <Route path="/lawyers" element={<Lawyers />} />
             <Route path="/disclaimer" element={<Disclaimer />} />
@@ -25,14 +26,16 @@ function App() {
             <Route path="/operations" element={<Operations />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+
             {/* Redirect unknown routes to home */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
+
         <Footer />
       </div>
     </Router>
   );
 }
 
-export default App;
+export default App; 

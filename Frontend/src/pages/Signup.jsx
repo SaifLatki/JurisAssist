@@ -7,11 +7,11 @@ export default function SignupPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [designation, setDesignation] = useState<'advocate' | 'client'>('advocate');
+  const [designation, setDesignation] = useState('advocate');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -24,7 +24,7 @@ export default function SignupPage() {
       });
       console.log('Signup response:', res.data);
       navigate('/login'); // redirect to login
-    } catch (err: any) {
+    } catch (err) {
       alert(err.response?.data?.error || 'Signup failed');
     } finally {
       setIsLoading(false);
@@ -39,6 +39,7 @@ export default function SignupPage() {
           className="absolute top-4 right-4 text-gray-400 hover:text-[#00C2FF] cursor-pointer transition-colors"
           onClick={() => navigate(-1)}
         />
+
         {/* Header */}
         <h3 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#00C2FF] to-[#00FF88] text-center mb-6">
           Create Account
@@ -60,6 +61,7 @@ export default function SignupPage() {
               className="w-full px-4 py-3 rounded-xl bg-[#0D1117] border border-white/10 text-white placeholder-gray-500 focus:ring-2 focus:ring-[#00C2FF] focus:border-transparent shadow-inner"
             />
           </div>
+
           <div>
             <label className="text-gray-400 text-sm mb-1 block">Email</label>
             <input
@@ -71,6 +73,7 @@ export default function SignupPage() {
               className="w-full px-4 py-3 rounded-xl bg-[#0D1117] border border-white/10 text-white placeholder-gray-500 focus:ring-2 focus:ring-[#00C2FF] focus:border-transparent shadow-inner"
             />
           </div>
+
           <div>
             <label className="text-gray-400 text-sm mb-1 block">Password</label>
             <input
@@ -82,11 +85,12 @@ export default function SignupPage() {
               className="w-full px-4 py-3 rounded-xl bg-[#0D1117] border border-white/10 text-white placeholder-gray-500 focus:ring-2 focus:ring-[#00C2FF] focus:border-transparent shadow-inner"
             />
           </div>
+
           <div>
             <label className="text-gray-400 text-sm mb-1 block">Designation</label>
             <select
               value={designation}
-              onChange={(e) => setDesignation(e.target.value as 'advocate' | 'client')}
+              onChange={(e) => setDesignation(e.target.value)}
               className="w-full px-4 py-3 rounded-xl bg-[#0D1117] border border-white/10 text-white focus:ring-2 focus:ring-[#00C2FF] focus:border-transparent shadow-inner"
             >
               <option value="advocate">Advocate</option>

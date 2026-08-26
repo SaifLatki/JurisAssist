@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 import { Mail, Phone, Star, MessageCircle } from "lucide-react";
-import { supabase } from "../lib/supabase"
-import { Lawyer } from "../types";
+import { supabase } from "../lib/supabase";
 import ContactLawyerModal from "../components/ContactLawyerModal";
 
 function Lawyers() {
-  const [lawyers, setLawyers] = useState<Lawyer[]>([]);
+  const [lawyers, setLawyers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedLawyer, setSelectedLawyer] = useState<Lawyer | null>(null);
+  const [selectedLawyer, setSelectedLawyer] = useState(null);
 
   useEffect(() => {
     fetchLawyers();
@@ -37,6 +36,7 @@ function Lawyers() {
           <h1 className="text-5xl font-bold text-white mb-4 bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
             Find Expert Lawyers
           </h1>
+
           <p className="text-gray-300 text-xl">
             Connect with experienced legal professionals in various practice areas
           </p>
@@ -61,11 +61,19 @@ function Lawyers() {
                       alt={lawyer.name}
                       className="w-20 h-20 rounded-full object-cover border border-white/10 shadow-sm"
                     />
+
                     <div>
-                      <h3 className="text-xl font-bold text-white">{lawyer.name}</h3>
-                      <p className="text-[#00FF88] font-medium">{lawyer.expertise}</p>
+                      <h3 className="text-xl font-bold text-white">
+                        {lawyer.name}
+                      </h3>
+
+                      <p className="text-[#00FF88] font-medium">
+                        {lawyer.expertise}
+                      </p>
+
                       <div className="flex items-center mt-1">
                         <Star className="h-4 w-4 text-yellow-400 fill-current" />
+
                         <span className="ml-1 text-sm font-medium text-gray-300">
                           {lawyer.rating.toFixed(1)}
                         </span>
@@ -73,13 +81,16 @@ function Lawyers() {
                     </div>
                   </div>
 
-                  <p className="text-gray-300 text-sm mb-4 line-clamp-3">{lawyer.bio}</p>
+                  <p className="text-gray-300 text-sm mb-4 line-clamp-3">
+                    {lawyer.bio}
+                  </p>
 
                   <div className="space-y-2 mb-4 text-gray-300">
                     <div className="flex items-center text-sm">
                       <Mail className="h-4 w-4 mr-2 text-gray-400" />
                       <span className="truncate">{lawyer.email}</span>
                     </div>
+
                     {lawyer.phone && (
                       <div className="flex items-center text-sm">
                         <Phone className="h-4 w-4 mr-2 text-gray-400" />
@@ -90,7 +101,7 @@ function Lawyers() {
 
                   <button
                     onClick={() => setSelectedLawyer(lawyer)}
-                    className="w-full bg-gradient-to-r from-gray-600 to-slate-600 text-white py-3 rounded-2xl font-semibold flex items-center justify-center space-x-2 shadow-lg  hover:opacity-90 transition-all"
+                    className="w-full bg-gradient-to-r from-gray-600 to-slate-600 text-white py-3 rounded-2xl font-semibold flex items-center justify-center space-x-2 shadow-lg hover:opacity-90 transition-all"
                   >
                     <MessageCircle className="h-4 w-4" />
                     <span>Contact Lawyer</span>
@@ -111,4 +122,5 @@ function Lawyers() {
     </div>
   );
 }
+
 export default Lawyers;
