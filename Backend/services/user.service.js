@@ -1,52 +1,50 @@
-const userModel = require('../models/user.model.js');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const userModel =
+    require('../models/user.model.js');
 
-async function registerUser(userData) {
-    const { name, email, password } = userData;
 
-    const existingUser = await userModel.findOne({ email });
+// GET USER PROFILE
 
-    if (existingUser) {
-        throw new Error('User already exists');
-    }
+async function getUserProfile(userId) {
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const newUser = new userModel({
-        name,
-        email,
-        password: hashedPassword
-    });
-
-    await newUser.save();
-
-    return newUser;
-}
-
-async function LoginUser(email, password) {
-    const user = await userModel.findOne({ email });
+    const user = await userModel
+        .findById(userId)
+        .select('-password');
 
     if (!user) {
         throw new Error('User not found');
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordValid) {
-        throw new Error('Invalid password');
-    }
-
-    const token = jwt.sign(
-        { userId: user._id },
-        process.env.JWT_SECRET,
-        { expiresIn: '1h' }
-    );
-
-    return { user, token };
+    return user;
 }
 
+
+// UPDATE USER PROFILE
+
+async function updateUserProfile(
+    userId,
+    userData
+) {
+
+    const user = await userModel
+        .findByIdAndUpdate(
+            userId,
+            userData,
+            {
+                new: true,
+                runValidators: true
+            }
+        )
+        .select('-password');
+
+    if (!user) {
+        throw new Error('User not found');
+    }
+
+    return user;
+}
+
+
 module.exports = {
-    registerUser,
-    LoginUser
+    getUserProfile,
+    updateUserProfile
 };
