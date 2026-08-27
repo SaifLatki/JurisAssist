@@ -5,18 +5,16 @@ import {
   Send,
   Paperclip,
   Plus,
-  MessageSquare,
   Trash2,
   Sparkles,
   ShieldCheck,
   FileText,
   X,
-  Menu,
 } from "lucide-react";
 
 import DashboardLayout from "../../components/DashboardLayout";
 
-export default function AIChat() {
+export default function ClientAIChat() {
   const [messages, setMessages] = useState([
     {
       id: 1,

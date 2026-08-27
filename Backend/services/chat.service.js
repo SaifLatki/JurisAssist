@@ -1,32 +1,29 @@
-// chat.service.js
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const Groq = require("groq-sdk");
-const OpenAI = require("openai");
 
-// Read API keys from environment variables
-const API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-const PREFERRED_MODEL = process.env.GEMINI_MODEL;
-const FALLBACK_MODELS = [
-  "gemini-1.5-flash",
-  "gemini-1.5-flash-8b",
-  "gemini-1.0-pro",
-  "gemini-1.5-pro",
-];
+const API_KEY =
+  process.env.GEMINI_API_KEY ||
+  process.env.GOOGLE_API_KEY;
 
-const GROQ_KEY = process.env.GROQ_API_KEY;
-const GROQ_MODEL = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
+if (!API_KEY) {
+  console.error("❌ GEMINI_API_KEY is missing from .env");
+}
 
-const OPENAI_KEY = process.env.OPENAI_API_KEY;
-const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
+const genAI = API_KEY
+  ? new GoogleGenerativeAI(API_KEY)
+  : null;
 
-// Initialize clients only if API keys exist
-const genAI = API_KEY ? new GoogleGenerativeAI(API_KEY) : null;
-const groq = GROQ_KEY ? new Groq({ apiKey: GROQ_KEY }) : null;
-const openai = OPENAI_KEY ? new OpenAI({ apiKey: OPENAI_KEY }) : null;
 
-// Functions remain the same
+/*
+|--------------------------------------------------------------------------
+| Normalize user message
+|--------------------------------------------------------------------------
+*/
+
 function normalizePrompt(message) {
-  if (typeof message === "string") return message.trim();
+  if (typeof message === "string") {
+    return message.trim();
+  }
+
   try {
     return JSON.stringify(message ?? "").trim();
   } catch {
@@ -34,119 +31,159 @@ function normalizePrompt(message) {
   }
 }
 
-function parseGeminiError(error) {
-  const code = error?.status || error?.code;
-  const rawMessage = error?.message || "Unknown Gemini error";
-  const isModelIssue = code === 404 || /model/i.test(rawMessage);
-  const isBadRequest = code === 400 || /prompt|invalid/i.test(rawMessage);
 
-  if (isModelIssue) {
-    return { status: 503, message: "AI model is temporarily unavailable. Please try again shortly." };
-  }
-  if (isBadRequest) {
-    return { status: 400, message: "Your message could not be processed. Please rephrase and try again." };
-  }
-  return { status: 502, message: "AI service is unavailable right now. Please try again." };
-}
+/*
+|--------------------------------------------------------------------------
+| Generate Legal Answer
+|--------------------------------------------------------------------------
+*/
 
 async function generateLegalAnswer(message) {
-  if (!genAI) {
-    const err = new Error("Gemini API key is not configured on the server.");
-    err.status = 500;
-    throw err;
-  }
 
   const prompt = normalizePrompt(message);
+
   if (!prompt) {
-    const err = new Error("Empty prompt. Please provide a legal question or text.");
-    err.status = 400;
-    throw err;
+    const error = new Error(
+      "Please enter a legal question."
+    );
+
+    error.status = 400;
+
+    throw error;
   }
 
-  const modelsToTry = PREFERRED_MODEL
-    ? [PREFERRED_MODEL, ...FALLBACK_MODELS.filter((m) => m !== PREFERRED_MODEL)]
-    : FALLBACK_MODELS;
 
-  let lastError;
+  if (!genAI) {
+    const error = new Error(
+      "Gemini API key is not configured on the server."
+    );
 
-  // Try Gemini models first
-  for (const modelId of modelsToTry) {
-    try {
-      const model = genAI.getGenerativeModel({ model: modelId });
-      const result = await model.generateContent({
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.2, maxOutputTokens: 512 },
-      });
+    error.status = 500;
 
-      const text = result?.response?.text?.() || result?.responseText || "";
+    throw error;
+  }
 
-      if (!text) {
-        const err = new Error("AI did not return any content.");
-        err.status = 502;
-        throw err;
-      }
-      return text;
-    } catch (error) {
-      lastError = error;
-      const code = error?.status || error?.code;
-      const rawMessage = error?.message || "";
-      if (code === 404 || /not found/i.test(rawMessage) || /not supported/i.test(rawMessage)) {
-        console.warn(`Model ${modelId} unavailable, trying next fallback...`);
-        continue;
-      }
-      break;
+
+  /*
+  |--------------------------------------------------------------------------
+  | Legal AI Prompt
+  |--------------------------------------------------------------------------
+  */
+
+  const legalPrompt = `
+You are JurisAssist, an AI-powered legal assistant.
+
+Your job is to help users understand legal concepts and documents
+in simple and clear language.
+
+IMPORTANT:
+- Do not claim to be a lawyer.
+- Do not present your response as a substitute for professional legal advice.
+- Explain legal concepts in plain language.
+- If the user's question depends on a specific country's law,
+  mention that laws vary by jurisdiction.
+- Encourage the user to consult a qualified advocate/lawyer
+  when the matter is serious or requires formal legal advice.
+
+User's question:
+
+${prompt}
+
+Provide a helpful, structured response.
+`;
+
+
+  /*
+  |--------------------------------------------------------------------------
+  | Current Gemini model
+  |--------------------------------------------------------------------------
+  */
+
+  const model = genAI.getGenerativeModel({
+    model: "gemini-2.5-flash",
+  });
+
+
+  try {
+
+    const result = await model.generateContent(legalPrompt);
+
+    const response = result.response;
+
+    const text = response.text();
+
+    if (!text) {
+      const error = new Error(
+        "Gemini did not return a response."
+      );
+
+      error.status = 502;
+
+      throw error;
     }
-  }
 
-  // Groq fallback
-  if (groq) {
-    try {
-      const completion = await groq.chat.completions.create({
-        model: GROQ_MODEL,
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.2,
-        max_tokens: 512,
-      });
+    return text;
 
-      const text = completion?.choices?.[0]?.message?.content?.trim();
-      if (text) return text;
+  } catch (error) {
 
-      const err = new Error("AI did not return any content.");
-      err.status = 502;
-      throw err;
-    } catch (error) {
-      lastError = error;
-      console.error("Groq API Error:", error);
+    console.error(
+      "❌ Gemini API Error:",
+      error
+    );
+
+    const status =
+      error?.status ||
+      error?.response?.status ||
+      502;
+
+    let message =
+      error?.message ||
+      "Gemini AI service is unavailable.";
+
+    /*
+    |--------------------------------------------------------------------------
+    | Better error messages
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+      status === 401 ||
+      status === 403 ||
+      /api key/i.test(message)
+    ) {
+      message =
+        "Gemini API key is invalid or unauthorized.";
     }
-  }
 
-  // OpenAI fallback
-  if (openai) {
-    try {
-      const completion = await openai.chat.completions.create({
-        model: OPENAI_MODEL,
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.2,
-        max_tokens: 512,
-      });
-
-      const text = completion?.choices?.[0]?.message?.content?.trim();
-      if (text) return text;
-
-      const err = new Error("AI did not return any content.");
-      err.status = 502;
-      throw err;
-    } catch (error) {
-      lastError = error;
-      console.error("OpenAI API Error:", error);
+    else if (
+      status === 429 ||
+      /quota/i.test(message) ||
+      /rate limit/i.test(message)
+    ) {
+      message =
+        "Gemini API quota has been exceeded. Please try again later.";
     }
-  }
 
-  const parsed = parseGeminiError(lastError);
-  const err = new Error(parsed.message);
-  err.status = parsed.status;
-  err.raw = lastError?.message;
-  throw err;
+    else if (
+      status === 404 ||
+      /model.*not found/i.test(message)
+    ) {
+      message =
+        "The configured Gemini model is unavailable.";
+    }
+
+    const finalError = new Error(message);
+
+    finalError.status =
+      status >= 400 && status < 600
+        ? status
+        : 502;
+
+    throw finalError;
+  }
 }
 
-module.exports = { generateLegalAnswer };
+
+module.exports = {
+  generateLegalAnswer,
+};

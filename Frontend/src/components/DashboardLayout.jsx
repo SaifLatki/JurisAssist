@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+
 import {
   LayoutDashboard,
   FileText,
@@ -14,6 +16,11 @@ import {
   LogOut,
   Scale,
 } from "lucide-react";
+
+
+/* =====================================================
+   CLIENT NAVIGATION
+===================================================== */
 
 const clientItems = [
   {
@@ -53,6 +60,11 @@ const clientItems = [
   },
 ];
 
+
+/* =====================================================
+   ADVOCATE NAVIGATION
+===================================================== */
+
 const advocateItems = [
   {
     label: "Dashboard",
@@ -91,32 +103,64 @@ const advocateItems = [
   },
 ];
 
+
 export default function DashboardLayout({
   role = "client",
   children,
 }) {
   const [isOpen, setIsOpen] = useState(false);
+
   const navigate = useNavigate();
 
+  const { user, logout } = useAuth();
+
+
+  /* =====================================================
+     SELECT NAVIGATION
+  ===================================================== */
+
   const items =
-    role === "advocate" ? advocateItems : clientItems;
+    role === "advocate"
+      ? advocateItems
+      : clientItems;
+
+
+  /* =====================================================
+     PORTAL TITLE
+  ===================================================== */
 
   const portalTitle =
     role === "advocate"
       ? "Advocate Portal"
       : "Client Portal";
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
 
-    navigate("/login");
+  /* =====================================================
+     LOGOUT
+  ===================================================== */
+
+  const handleLogout = () => {
+
+    // Remove authentication through AuthContext
+    logout();
+
+    // Close mobile sidebar
+    setIsOpen(false);
+
+    // Send user to login
+    navigate("/login", {
+      replace: true,
+    });
   };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#111827] to-[#020617] text-white">
 
-      {/* ================= SIDEBAR ================= */}
+
+      {/* ==================================================
+          SIDEBAR
+      ================================================== */}
 
       <aside
         className={`fixed inset-y-0 left-0 z-50 w-72 border-r border-white/10 bg-[#0b1220]/95 backdrop-blur-xl transition-transform duration-300 ${
@@ -126,7 +170,10 @@ export default function DashboardLayout({
         }`}
       >
 
-        {/* Logo */}
+
+        {/* ==================================================
+            LOGO
+        ================================================== */}
 
         <div className="flex h-20 items-center justify-between border-b border-white/10 px-6">
 
@@ -134,16 +181,21 @@ export default function DashboardLayout({
             onClick={() => navigate("/")}
             className="flex items-center gap-3"
           >
+
             <div className="relative">
+
               <Scale className="h-8 w-8 text-[#00C2FF]" />
 
               <div className="absolute inset-0 bg-[#00C2FF] blur-xl opacity-30" />
+
             </div>
 
             <span className="text-xl font-bold bg-gradient-to-r from-[#00C2FF] to-[#00FF88] bg-clip-text text-transparent">
               JurisAssist
             </span>
+
           </button>
+
 
           {/* Mobile close */}
 
@@ -156,7 +208,10 @@ export default function DashboardLayout({
 
         </div>
 
-        {/* Portal information */}
+
+        {/* ==================================================
+            PORTAL INFORMATION
+        ================================================== */}
 
         <div className="px-5 py-6">
 
@@ -174,11 +229,15 @@ export default function DashboardLayout({
 
           </div>
 
-          {/* Navigation */}
+
+          {/* ==================================================
+              NAVIGATION
+          ================================================== */}
 
           <nav className="space-y-1">
 
             {items.map((item) => {
+
               const Icon = item.icon;
 
               return (
@@ -194,37 +253,56 @@ export default function DashboardLayout({
                     }`
                   }
                 >
+
                   <Icon className="h-5 w-5" />
 
-                  <span>{item.label}</span>
+                  <span>
+                    {item.label}
+                  </span>
+
                 </NavLink>
               );
+
             })}
 
           </nav>
 
         </div>
 
-        {/* Logout */}
+
+        {/* ==================================================
+            LOGOUT
+        ================================================== */}
 
         <button
           onClick={handleLogout}
           className="absolute bottom-6 left-5 right-5 flex items-center gap-3 rounded-xl border border-white/10 px-4 py-3 text-sm text-gray-400 transition-all hover:bg-red-500/10 hover:text-red-300"
         >
+
           <LogOut className="h-5 w-5" />
 
-          <span>Sign out</span>
+          <span>
+            Sign out
+          </span>
+
         </button>
 
       </aside>
 
-      {/* ================= MAIN CONTENT ================= */}
+
+      {/* ==================================================
+          MAIN CONTENT
+      ================================================== */}
 
       <div className="lg:pl-72">
 
-        {/* Top Header */}
+
+        {/* ==================================================
+            TOP HEADER
+        ================================================== */}
 
         <header className="sticky top-0 z-40 flex h-20 items-center justify-between border-b border-white/10 bg-[#0b1220]/80 px-4 backdrop-blur-xl sm:px-8">
+
 
           {/* Mobile menu */}
 
@@ -235,6 +313,7 @@ export default function DashboardLayout({
             <Menu className="h-6 w-6" />
           </button>
 
+
           {/* User information */}
 
           <div className="ml-auto flex items-center gap-3">
@@ -242,28 +321,36 @@ export default function DashboardLayout({
             <div className="hidden text-right sm:block">
 
               <p className="text-sm font-semibold">
-                {role === "advocate"
-                  ? "Advocate"
-                  : "Client"}
+                {user?.name ||
+                  (role === "advocate"
+                    ? "Advocate"
+                    : "Client")}
               </p>
 
               <p className="text-xs text-gray-500">
-                JurisAssist account
+                {user?.email ||
+                  "JurisAssist account"}
               </p>
 
             </div>
 
+
             <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#00C2FF]/30 bg-white/5 text-[#00C2FF]">
+
               <UserRound className="h-5 w-5" />
+
             </div>
 
           </div>
 
         </header>
 
-        {/* Page Content */}
 
-        <main className="p-4 sm:p-8">
+        {/* ==================================================
+            PAGE CONTENT
+        ================================================== */}
+
+        <main className="min-h-[calc(100vh-5rem)] p-4 sm:p-8">
           {children}
         </main>
 
@@ -327,7 +414,9 @@ export function StatCard({
       <div className="mb-4 flex items-center justify-between">
 
         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#00C2FF]/10 text-[#00C2FF]">
+
           <Icon className="h-5 w-5" />
+
         </div>
 
         {note && (
