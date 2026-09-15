@@ -68,15 +68,15 @@ cd jurisassist
 
 ```bash
 # Backend
-cd server && npm install
+cd Backend && pnpm install
 
 # Frontend
-cd ../client && npm install
+cd ../Frontend && pnpm install
 ```
 
 ### 3️⃣ Configure Environment Variables
 
-Create a `.env` file inside the `/server` directory:
+Create a `.env` file inside the `/Backend` directory:
 
 ```env
 MONGO_URI=your_mongodb_connection_string
@@ -88,14 +88,14 @@ PORT=5000
 ### 4️⃣ Run the Application
 
 ```bash
-# Start backend (from /server)
-npm run dev
+# Start backend (from /Backend)
+pnpm run dev
 
-# Start frontend (from /client)
-npm start
+# Start frontend (from /Frontend)
+pnpm run dev
 ```
 
-The app will be running at `http://localhost:3000` 🚀
+The frontend will be running at `http://localhost:5173`.
 
 ---
 
@@ -103,15 +103,15 @@ The app will be running at `http://localhost:3000` 🚀
 
 ```
 jurisassist/
-├── client/                  # React frontend
+├── Frontend/                # React frontend
 │   ├── src/
 │   │   ├── components/      # Reusable UI components
 │   │   ├── pages/           # Route-level pages
 │   │   ├── context/         # Auth & global state
-│   │   └── utils/           # Axios config, helpers
+│   │   └── lib/             # Shared frontend clients
 │   └── public/
 │
-├── server/                  # Node.js backend
+├── Backend/                 # Node.js backend
 │   ├── controllers/         # Route logic
 │   ├── models/              # Mongoose schemas
 │   ├── routes/              # Express routes

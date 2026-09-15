@@ -15,7 +15,7 @@ export default function Footer({ onNavigate }) {
   };
 
   return (
-    <footer className="bg-[#0A0E13] border-t border-white/5 mt-20 text-white">
+    <footer className="bg-[#0A0E13] border-t border-white/5 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Top Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 mb-10">

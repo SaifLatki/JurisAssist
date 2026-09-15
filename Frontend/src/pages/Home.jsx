@@ -78,7 +78,7 @@ export default function Home() {
 
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#080c14] text-white">
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="max-w-7xl mx-auto relative z-10 text-center space-y-8">
@@ -90,11 +90,11 @@ export default function Home() {
           </div>
 
           <h1 className="text-5xl md:text-7xl font-bold leading-tight">
-            <span className="bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
+            <span className="text-white">
               Making Legal Language
             </span>
             <br />
-            <span className="bg-gradient-to-r from-[#00C2FF] to-[#00FF88] bg-clip-text text-transparent">
+            <span className="text-[#00C2FF]">
               Simple & Accessible
             </span>
           </h1>
@@ -105,7 +105,7 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-            <button onClick={() => navigate('/login')} className="group px-8 py-4 bg-gradient-to-r from-slate-900 to-slate-700 rounded-lg font-semibold text-white hover:shadow-lg hover:shadow-slate-500 transition-all duration-300 flex items-center space-x-2">
+            <button onClick={() => navigate('/login')} className="group px-8 py-4 bg-[#1e293b] border border-[#334155] rounded-lg font-semibold text-white hover:bg-[#334155] hover:shadow-lg hover:shadow-slate-500/30 transition-all duration-300 flex items-center space-x-2">
               <span>Get Started</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
@@ -134,7 +134,7 @@ export default function Home() {
                   key={index}
                   className="group p-8 bg-white/5 border border-white/10 rounded-2xl "
                 >
-                  <div className="w-14 h-14 bg-gradient-to-br from-slate-900 to-[#00FF88]/20 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <div className="w-14 h-14 bg-[#102531] border border-[#00C2FF]/20 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                     <Icon className="w-7 h-7 text-[#00C2FF]" />
                   </div>
                   <h3 className="text-xl font-semibold text-white mb-3">{feature.title}</h3>
@@ -155,12 +155,12 @@ export default function Home() {
               Trusted by individuals and businesses across various sectors
             </p>
           </div>
-
+            
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {useCases.map((useCase, index) => (
               <div
                 key={index}
-                className="p-8 bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 rounded-2xl hover:border-[#00FF88]/50 transition-all duration-300"
+                className="p-8 bg-[#0d141d] border border-white/10 rounded-2xl hover:border-[#00FF88]/50 transition-all duration-300"
               >
                 <div className="text-5xl mb-4">{useCase.icon}</div>
                 <h3 className="text-2xl font-bold text-white mb-3">{useCase.title}</h3>
@@ -185,7 +185,7 @@ export default function Home() {
                 key={index}
                 className={`p-8 rounded-2xl border transition-all duration-300 ${
                   tier.highlighted
-                    ? 'bg-gradient-to-br from-[#00C2FF]/10 to-[#00FF88]/10 border-[#00C2FF] shadow-xl shadow-[#00C2FF]/20 scale-105'
+                    ? 'bg-[#102531] border-[#00C2FF] shadow-xl shadow-[#00C2FF]/20 scale-105'
                     : 'bg-white/5 border-white/10 hover:border-[#00C2FF]/30'
                 }`}
               >
@@ -205,7 +205,7 @@ export default function Home() {
                 <button
                   className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 ${
                     tier.highlighted
-                      ? 'bg-gradient-to-r from-[#00C2FF] to-[#00FF88] text-white hover:shadow-lg hover:shadow-[#00C2FF]/50'
+                      ? 'bg-[#00C2FF] text-[#061018] hover:bg-[#33cfff] hover:shadow-lg hover:shadow-[#00C2FF]/50'
                       : 'bg-white/5 text-white border border-white/10 hover:bg-white/10'
                   }`}
                 >

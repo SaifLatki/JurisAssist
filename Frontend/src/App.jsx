@@ -2,6 +2,8 @@ import {
   Routes,
   Route,
   Navigate,
+  useLocation,
+  useNavigate,
 } from "react-router-dom";
 
 // ==============================
@@ -15,8 +17,8 @@ import Demo from "./pages/Demo";
 import Lawyers from "./pages/Lawyers";
 import Disclaimer from "./pages/Disclaimer";
 
-import LoginPage from "./pages/LoginPage";
-import SignupPage from "./pages/SignupPage";
+import LoginPage from "./pages/Login";
+import SignupPage from "./pages/Signup";
 
 // ==============================
 // CLIENT PAGES
@@ -47,10 +49,28 @@ import AdvocateAppointments from "./pages/advocate/AdvocateAppointments";
 // ==============================
 
 import ProtectedRoute from "./components/ProtectedRoute";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+
+const publicPaths = [
+  "/",
+  "/about",
+  "/operations",
+  "/demo",
+  "/lawyers",
+  "/disclaimer",
+];
 
 export default function App() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const showPublicChrome = publicPaths.includes(location.pathname);
+
   return (
-    <Routes>
+    <>
+      {showPublicChrome && <Navbar />}
+
+      <Routes>
 
       {/* =====================================================
           PUBLIC ROUTES
@@ -218,6 +238,11 @@ export default function App() {
         element={<Navigate to="/" replace />}
       />
 
-    </Routes>
+      </Routes>
+
+      {showPublicChrome && (
+        <Footer onNavigate={(path) => navigate(`/${path}`)} />
+      )}
+    </>
   );
 }
